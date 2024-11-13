@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+      crossorigin="anonymous"
+    />
+
+    <link rel="stylesheet" href="static/style.css" />
+
+    <title>Dice Roll Game</title>
+</head>
+<body class="container" style="background-color: beige">
+    <br />
+    <h1 style="color: blue;">Dice Roll Game</h1>
+    <br />
+    <div id="dice-container">
+        {% for item in files_list %}
+        <img src="/static/{{ item }}.png" class="dice" style="width: 80px" />
+        {% endfor %}
+    </div>
+    <br />
+    <form id="dice-form" method="POST">
+        <label for="">num of sides</label>
+        <input type="range" name="num_sides" value="{{ sides_default }}" min="1" max="6" oninput="this.nextElementSibling.value = this.value" />
+        <output>{{ sides_default }}</output>
+        <br />
+        <label>num of Dice</label> 
+        <input type="range" name="num_dice" value="{{ dice_default }}" min="1" max="8" oninput="this.nextElementSibling.value = this.value" />
+        <output>{{ dice_default }}</output>
+        <br /><br />
+        <input type="submit" value="Roll" class="btn btn-primary" />
+        <p style="margin-top: 10px; font-size: 16px; color: darkgreen;">Test your luck</p>
+    </form>
+
+    <script
+    src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"
+    ></script>
+    <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"
+    integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS"
+    crossorigin="anonymous"
+    ></script>
+    
+    <!-- JavaScript to add dice roll animation -->
+    <script>
+        const form = document.getElementById("dice-form");
+        const diceContainer = document.getElementById("dice-container");
+
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            // Start dice roll animation
+            startDiceRollAnimation();
+
+            // Wait briefly before submitting the form to show the rolling effect
+            setTimeout(() => {
+                form.submit();
+            }, 1000); // 1-second delay for rolling effect
+        });
+
+        function startDiceRollAnimation() {
+            diceContainer.innerHTML = ""; // Clear the current dice images
+
+            // Generate random dice images during the animation
+            const numDice = {{ dice_default }};
+            for (let i = 0; i < numDice; i++) {
+                const img = document.createElement("img");
+                img.src = `/static/${Math.floor(Math.random() * 6) + 1}.png`;
+                img.className = "dice";
+                img.style.width = "80px";
+                diceContainer.appendChild(img);
+            }
+
+            // Continue changing the dice faces for a short time to create a rolling effect
+            const interval = setInterval(() => {
+                diceContainer.innerHTML = "";
+                for (let i = 0; i < numDice; i++) {
+                    const img = document.createElement("img");
+                    img.src = `/static/${Math.floor(Math.random() * 6) + 1}.png`;
+                    img.className = "dice";
+                    img.style.width = "80px";
+                    diceContainer.appendChild(img);
+                }
+            }, 100); // Change images every 100 ms
+
+            // Stop the rolling effect after 1 second
+            setTimeout(() => clearInterval(interval), 1000);
+        }
+    </script>
+</body>
+</html>
